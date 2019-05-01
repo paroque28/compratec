@@ -1,1 +1,1 @@
-# compratec
+# CompraTEC
