@@ -1,0 +1,21 @@
+version: "3.3"
+services:
+    users-service:
+        build: ./users-service
+        ports:
+            - 8001:80
+    catalog-service:
+        build: ./catalog-service
+        ports:
+            - 8002:80
+    sql:
+        image: postgres
+        volumes:
+            - db-data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_PASSWORD: compratec
+volumes:
+    db-data:
+        driver: local
