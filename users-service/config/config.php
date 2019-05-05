@@ -7,8 +7,9 @@ return array(
     'database' => array(
         'user'     => 'postgres', // Database username
         'password' => 'compratec', // Database password
-        'host'     => 'sql', // Database host
-        'name'     => 'public', // Database schema name
+        'port'     => '5432', // Database port
+        'host'     => 'localhost', // Database host
+        'name'     => 'postgres', // Database schema name
     ),
     'serverName' => 'yourdomain.com',
 );
