@@ -1,0 +1,14 @@
+{
+    "name": "soa/compratec",
+    "authors": [
+        {
+            "name": "Pablo Rodriguez",
+            "email": "paroque28@gmail.com"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^5.0",
+        "zendframework/zend-config": "~2.3",
+        "zendframework/zend-http": "~2.3"
+    }
+}
