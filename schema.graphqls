@@ -1,0 +1,13 @@
+
+schema {
+  query: Query
+  mutation: Users
+}
+
+type Users {
+  createToken(username: String, password: String): String
+}
+
+type Query {
+  getId(token: String): String
+}

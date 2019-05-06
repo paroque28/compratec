@@ -50,7 +50,7 @@ EOL;
                     $tokenId    = base64_encode(openssl_random_pseudo_bytes(32));
                     $issuedAt   = time();
                     $notBefore  = $issuedAt + 5;  //Adding 5 seconds
-                    $expire     = $notBefore + 1200; // Adding 1200 seconds
+                    $expire     = $notBefore + 100; // Adding n seconds
                     $serverName = $config->get('serverName');
                     
                     /*
@@ -70,17 +70,6 @@ EOL;
                     
                     header('Content-type: application/json');
                     
-                    /*
-                     * Extract the key, which is coming from the config file. 
-                     * 
-                     * Best suggestion is the key to be a binary string and 
-                     * store it in encoded in a config file. 
-                     *
-                     * Can be generated with base64_encode(openssl_random_pseudo_bytes(64));
-                     *
-                     * keep it secure! You'll need the exact key to verify the 
-                     * token later.
-                     */
                     $secretKey = base64_decode($config->get('jwt')->get('key'));
                     
                     /*
