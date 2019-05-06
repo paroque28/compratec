@@ -3,7 +3,7 @@ services:
     users-service:
         build: ./users-service
         ports:
-            - 8001:80
+            - 8001:8080
     catalog-service:
         build: ./catalog-service
         ports:

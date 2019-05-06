@@ -4,7 +4,7 @@ use GraphQL\GraphQL;
 use GraphQL\Utils\BuildSchema;
 
 try {
-    $schema = BuildSchema::build(file_get_contents(__DIR__ . '/../schema.graphqls'));
+    $schema = BuildSchema::build(file_get_contents(__DIR__ . '/schema.graphqls'));
     $rootValue = include __DIR__ . '/rootvalue.php';
     $rawInput = file_get_contents('php://input');
     $input = json_decode($rawInput, true);
