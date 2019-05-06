@@ -11,5 +11,5 @@ return array(
         'host'     => 'localhost', // Database host
         'name'     => 'postgres', // Database schema name
     ),
-    'serverName' => 'yourdomain.com',
+    'serverName' => 'compratec.com',
 );

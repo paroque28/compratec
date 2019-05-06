@@ -113,7 +113,7 @@ EOL;
                 $tokenId    = base64_encode(openssl_random_pseudo_bytes(32));
                 $issuedAt   = time();
                 $notBefore  = $issuedAt + 5;  //Adding 5 seconds
-                $expire     = $notBefore + 2000; // Adding n seconds
+                $expire     = $notBefore + 60; // Adding n seconds
                 $serverName = $config->get('serverName');
                 
                 /*
@@ -182,7 +182,7 @@ function decodeJWT($jwt)
     return $decoded;
 }
 
-class GetId implements Resolver
+class GetUsername implements Resolver
 {
     public function resolve($root, $args, $context)
     {   
@@ -194,14 +194,14 @@ class GetId implements Resolver
         $config = Factory::fromFile('config/config.php', true);
         $dsn = 'pgsql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name') . ';port=' . $config->get('database')->get('port');
         $db = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
-        $sql = 'SELECT id FROM   users WHERE  id = ?';
+        $sql = 'SELECT id, username FROM   users WHERE  id = ?';
         $stmt = $db->prepare($sql);
         $data = (array) $jwt["data"];
         $id = $data["userId"];
         $stmt->execute([$id]);
         $rs = $stmt->fetch();
         if ($rs) {
-            return $rs['id'];
+            return $rs['username'];
         }else {
             throw new UserException("Unknown User Id");
         }
@@ -217,8 +217,8 @@ return [
         $obj = new CreateToken();
         return $obj->resolve($root, $args, $context);
     },
-    'getId' => function($root, $args, $context) {
-        $obj = new GetId();
+    'getUsername' => function($root, $args, $context) {
+        $obj = new GetUsername();
         return $obj->resolve($root, $args, $context);
     },
     'prefix' => '',

@@ -13,4 +13,5 @@ type Users {
 
 type Query {
   getId(token: String): String
+  getUsername(token: String): String
 }
