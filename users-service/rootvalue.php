@@ -14,8 +14,66 @@ class UserException extends \Exception implements ClientAware
         return 'UserError';
     }
 }
+class DBException extends \Exception implements ClientAware
+{
+    public function isClientSafe()
+    {
+        return true;
+    }
+
+    public function getCategory()
+    {
+        return 'DBError';
+    }
+}
 interface Resolver {
     public function resolve($root, $args, $context);
+}
+class CreateUser implements Resolver
+{
+    public function resolve($root, $args, $context)
+    {   
+        if (!array_key_exists('username', $args)){
+            throw new UserException('Field username is empty!');
+        }
+        if (!array_key_exists('password', $args)){
+            throw new UserException('Field password is empty!');
+        }
+        $username = $args['username'];
+        $password = $args['password'];
+        $config = Factory::fromFile('config/config.php', true);
+        /*
+            * Connect to database to validate credentials
+            */
+        $dsn = 'pgsql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name') . ';port=' . $config->get('database')->get('port');
+        $db = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+        
+
+        $sql = 'SELECT id FROM   users WHERE  username = ?';
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$username]);
+        $rs = $stmt->fetch();
+        
+        if ($rs) {
+            throw new UserException("User already exists");
+        }
+        
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        try{
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
+            $stmt = $db->prepare($sql);
+            $stmt->execute([$username, $password_hash]);
+            return "New record created successfully";
+        } catch(PDOException $e){
+            throw new DBException( "Error: " . $sql . $e->getMessage());
+        }
+        
+        $db->close();
+    
+
+    }
+    
 }
 class CreateToken implements Resolver
 {
@@ -55,7 +113,7 @@ EOL;
                 $tokenId    = base64_encode(openssl_random_pseudo_bytes(32));
                 $issuedAt   = time();
                 $notBefore  = $issuedAt + 5;  //Adding 5 seconds
-                $expire     = $notBefore + 100; // Adding n seconds
+                $expire     = $notBefore + 2000; // Adding n seconds
                 $serverName = $config->get('serverName');
                 
                 /*
@@ -72,8 +130,6 @@ EOL;
                         'userName' => $username, // User name
                     ]
                 ];
-                
-                header('Content-type: application/json');
                 
                 $secretKey = base64_decode($config->get('jwt')->get('key'));
                 
@@ -97,22 +153,73 @@ EOL;
                     
                 return $jwt;
             } else{
-                throw new UserException('User doesn\'t exist');
+                throw new UserException('Password doesn\'t match');
             }
         } else {
-            throw new Exception('DB connection failed');
+            throw new UserException('User doesn\'t exist');
         }
 
     }
     
 }
+function decodeJWT($jwt)
+{
+    $config = Factory::fromFile('config/config.php', true);
+    $secretKey = base64_decode($config->get('jwt')->get('key'));
+    $algorithm = $config->get('jwt')->get('algorithm');
+    try{
+        $decoded = JWT::decode($jwt, $secretKey,array($algorithm));
+    }
+    catch (Firebase\JWT\ExpiredException $e){
+        throw new UserException("Token Expired");
+    }
+    catch(Firebase\JWT\SignatureInvalidException $e){
+        throw new UserException("Signature Invalid");
+    }
+    catch(Firebase\JWT\BeforeValidException $e){
+        throw new UserException("Before Valid");
+    }
+    return $decoded;
+}
+
+class GetId implements Resolver
+{
+    public function resolve($root, $args, $context)
+    {   
+        if (!array_key_exists('token', $args)){
+            throw new UserException('Field token is empty!');
+        }
+        $jwt = (array) decodeJWT($args['token']);
+
+        $config = Factory::fromFile('config/config.php', true);
+        $dsn = 'pgsql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name') . ';port=' . $config->get('database')->get('port');
+        $db = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+        $sql = 'SELECT id FROM   users WHERE  id = ?';
+        $stmt = $db->prepare($sql);
+        $data = (array) $jwt["data"];
+        $id = $data["userId"];
+        $stmt->execute([$id]);
+        $rs = $stmt->fetch();
+        if ($rs) {
+            return $rs['id'];
+        }else {
+            throw new UserException("Unknown User Id");
+        }
+    }
+    
+}
 return [
+    'createUser' => function($root, $args, $context) {
+        $obj = new CreateUser();
+        return $obj->resolve($root, $args, $context);
+    },
     'createToken' => function($root, $args, $context) {
         $obj = new CreateToken();
         return $obj->resolve($root, $args, $context);
     },
     'getId' => function($root, $args, $context) {
-        return $root['prefix']."hi";
+        $obj = new GetId();
+        return $obj->resolve($root, $args, $context);
     },
     'prefix' => '',
 ];

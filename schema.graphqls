@@ -5,6 +5,9 @@ schema {
 }
 
 type Users {
+  id: String
+  username: String
+  createUser(username: String, password: String): String
   createToken(username: String, password: String): String
 }
 
