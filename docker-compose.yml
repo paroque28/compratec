@@ -1,5 +1,12 @@
 version: "3.3"
 services:
+    reverseproxy:
+        build: ./nginx
+        ports:
+            - 80:80
+        depends_on:
+            - users-service
+            - catalog-service
     users-service:
         build: ./users-service
         ports:
