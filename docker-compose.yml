@@ -29,46 +29,46 @@ services:
             - 5432:5432
         environment:
             POSTGRES_PASSWORD: compratec
-    mongodb-primary:
-        image: 'bitnami/mongodb:latest'
-        environment:
-        - MONGODB_REPLICA_SET_MODE=primary
-        - MOONGODB_USERNAME=compratec
-        - MONGODB_PASSWORD=compratec
-        - MONGODB_ROOT_PASSWORD=compratec
-        - MONGODB_REPLICA_SET_KEY=replicasetkey123
-        ports:
-        - "27017:27017"
-        volumes:
-        - 'mongodb_master_data:/bitnami'
+    # mongodb-primary:
+    #     image: 'bitnami/mongodb:latest'
+    #     environment:
+    #     - MONGODB_REPLICA_SET_MODE=primary
+    #     - MOONGODB_USERNAME=compratec
+    #     - MONGODB_PASSWORD=compratec
+    #     - MONGODB_ROOT_PASSWORD=compratec
+    #     - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    #     ports:
+    #     - "27017:27017"
+    #     volumes:
+    #     - 'mongodb_master_data:/bitnami'
 
-    mongodb-secondary:
-        image: 'bitnami/mongodb:latest'
-        depends_on:
-        - mongodb-primary
-        environment:
-        - MONGODB_REPLICA_SET_MODE=secondary
-        - MONGODB_PRIMARY_HOST=mongodb-primary
-        - MOONGODB_USERNAME=compratec
-        - MONGODB_PASSWORD=compratec
-        - MONGODB_PRIMARY_PORT_NUMBER=27017
-        - MONGODB_PRIMARY_ROOT_PASSWORD=compratec
-        - MONGODB_REPLICA_SET_KEY=replicasetkey123
-        ports:
-        - "27018:27017"
+    # mongodb-secondary:
+    #     image: 'bitnami/mongodb:latest'
+    #     depends_on:
+    #     - mongodb-primary
+    #     environment:
+    #     - MONGODB_REPLICA_SET_MODE=secondary
+    #     - MONGODB_PRIMARY_HOST=mongodb-primary
+    #     - MOONGODB_USERNAME=compratec
+    #     - MONGODB_PASSWORD=compratec
+    #     - MONGODB_PRIMARY_PORT_NUMBER=27017
+    #     - MONGODB_PRIMARY_ROOT_PASSWORD=compratec
+    #     - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    #     ports:
+    #     - "27018:27017"
 
-    mongodb-arbiter:
-        image: 'bitnami/mongodb:latest'
-        depends_on:
-        - mongodb-primary
-        environment:
-        - MONGODB_REPLICA_SET_MODE=arbiter
-        - MONGODB_PRIMARY_HOST=mongodb-primary
-        - MONGODB_PRIMARY_PORT_NUMBER=27017
-        - MOONGODB_USERNAME=compratec
-        - MONGODB_PASSWORD=compratec|
-        - MONGODB_PRIMARY_ROOT_PASSWORD=compratec
-        - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    # mongodb-arbiter:
+    #     image: 'bitnami/mongodb:latest'
+    #     depends_on:
+    #     - mongodb-primary
+    #     environment:
+    #     - MONGODB_REPLICA_SET_MODE=arbiter
+    #     - MONGODB_PRIMARY_HOST=mongodb-primary
+    #     - MONGODB_PRIMARY_PORT_NUMBER=27017
+    #     - MOONGODB_USERNAME=compratec
+    #     - MONGODB_PASSWORD=compratec|
+    #     - MONGODB_PRIMARY_ROOT_PASSWORD=compratec
+    #     - MONGODB_REPLICA_SET_KEY=replicasetkey123
     
         mongo:
             image: mongo
@@ -77,7 +77,7 @@ services:
             MONGO_INITDB_ROOT_USERNAME: compratec
             MONGO_INITDB_ROOT_PASSWORD: compratec
             ports:
-            - "27018:27017"
+            - "27017:27017"
   
 volumes:
     db-data:
