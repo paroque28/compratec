@@ -1,2 +1,4 @@
 Flask==1.0.2
 graphene>=2.0
+Flask-GraphQL==2.0.0
+graphene-mongo==0.2.5
