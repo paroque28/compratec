@@ -1,38 +1,45 @@
 # flask_graphene_mongo/schema.py
 import graphene
-from graphene.relay import Node
-from graphene_mongo import MongoengineConnectionField, MongoengineObjectType
+from graphene_mongo import MongoengineObjectType
 from models import Product as ProductModel
-from models import ProductType as ProductTypeModel
-from models import Catalog as CatalogModel
+
 
 class Product(MongoengineObjectType):
     class Meta:
         model = ProductModel
-        interfaces = (Node,)
+
+class CreateProduct(graphene.Mutation):
+    class Arguments:
+        code = graphene.String()
+        name = graphene.String()
+        color = graphene.String()
+        price = graphene.Int()
+        quantity = graphene.Int()
+
+    ok = graphene.Boolean()
+    product = graphene.Field(lambda:Product)
 
 
 
-class ProductType(MongoengineObjectType):
-    class Meta:
-        model = ProductTypeModel
-        interfaces = (Node,)
+    def mutate(self, info, code, name, color, price, quantity):
+        product = ProductModel(code = code, name = name, color = color, price = price, quantity = quantity) 
+        product.save()
 
+        return CreateProduct(product=product)
 
+class MyMutations(graphene.ObjectType):
+    createProduct = CreateProduct.Field()
 
-class Catalog(MongoengineObjectType):
-    class Meta:
-        model = CatalogModel
-        interfaces = (Node,)
-
-
+  
 class Query(graphene.ObjectType):
-    node = Node.Field()
-    catalo = graphene.Field(Catalog)
-    productType = graphene.Field(ProductType)
-    product = graphene.Field(Product)
-    all_products = MongoengineConnectionField(Product)
-    all_productTypes = MongoengineConnectionField(ProductType)
-    all_catalogs = MongoengineConnectionField(Catalog)
+    productByCode = graphene.Field(Product, code=graphene.String(required=True))
+    allProducts = graphene.List(Product)
 
-schema = graphene.Schema(query=Query, types=[Product, ProductType, Catalog])
+    def resolve_productByCode(_,info,code):
+        return ProductModel.objects(code=code).first()
+    
+    def resolve_allProducts(_,info):
+        return list(ProductModel.objects.all())
+
+
+schema = graphene.Schema(query=Query, mutation=MyMutations)

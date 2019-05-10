@@ -1,11 +1,11 @@
 FROM ubuntu
 ENV DEBIAN_FRONTEND=noninteractive 
-COPY . /usr/src/myapp
-WORKDIR /usr/src/myapp
 RUN apt-get update
 RUN apt-get install -y php7.2-cli composer
 RUN apt-get install -y php-pgsql php7.2-mbstring
 RUN useradd php
+COPY . /usr/src/myapp
+WORKDIR /usr/src/myapp
 RUN chown php /usr/src/myapp -R
 USER php
 RUN composer install
