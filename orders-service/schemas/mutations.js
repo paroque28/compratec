@@ -1,9 +1,9 @@
 const graphql = require('graphql');
+const jwt = require('jsonwebtoken');
 const { db } = require('../pgAdaptor');
 
 const { GraphQLObjectType, GraphQLString } = graphql;
 const { OrderType } = require('./types');
-const jwt = require('jsonwebtoken');
 const ProductModel = require('../models/product');
 
 const KEY = 'compratec';
@@ -19,14 +19,11 @@ const RootMutation = new GraphQLObjectType({
         productId: { type: GraphQLString },
       },
       resolve(parentValue, args) {
-        const legit = jwt.verify(args.token, KEY);
-        console.log(`\nJWT verification result: ${JSON.stringify(legit)}`);
+        jwt.verify(args.token, KEY);
         const decoded = jwt.decode(args.token, { complete: true });
-        console.log(`\nDecoded jwt: ${JSON.stringify(decoded)}`);
         const userFromToken = decoded.payload.data.userId;
         return new Promise((resolve, reject) => {
-          ProductModel.countDocuments({ code: args.productId }, (err, docs) => {
-            console.log(docs);
+          ProductModel.countDocuments({ code: args.productId }, (error, docs) => {
             if (docs > 0) {
               const query = 'INSERT INTO orders( userId, productId ) VALUES ($1,$2) RETURNING id, userId, productId, issueDate';
               const values = [
@@ -39,7 +36,7 @@ const RootMutation = new GraphQLObjectType({
                 .then(res => res)
                 .catch(err => err));
             } else {
-              reject({ err: 'Error, product id not valid' });
+              reject(new Error('Error, product id not valid'));
             }
           });
         });

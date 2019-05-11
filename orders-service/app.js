@@ -3,11 +3,12 @@
 const graphql = require('graphql');
 const express = require('express');
 const expressGraphQl = require('express-graphql');
+const mongoose = require('mongoose');
 
 const { GraphQLSchema } = graphql;
 const { query } = require('./schemas/queries');
 const { mutation } = require('./schemas/mutations');
-const mongoose = require('mongoose');
+
 
 const schema = new GraphQLSchema({
   query,

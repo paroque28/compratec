@@ -1,7 +1,8 @@
-const { db } = require('../pgAdaptor');
 const { GraphQLObjectType, GraphQLID, GraphQLList } = require('graphql');
+const { db } = require('../pgAdaptor');
+
 const {
-  CustomerType, OrderType, ProductType, OrderProductType, CustomerOrderType,
+  OrderType,
 } = require('./types');
 
 const RootQuery = new GraphQLObjectType({
@@ -11,7 +12,7 @@ const RootQuery = new GraphQLObjectType({
     order: {
       type: OrderType,
       args: { id: { type: GraphQLID } },
-      resolve(parentValue, args) {
+      resolve(args) {
         const query = 'SELECT * FROM orders WHERE id=$1';
         const values = [args.id];
 
@@ -23,7 +24,7 @@ const RootQuery = new GraphQLObjectType({
     },
     allOrders: {
       type: GraphQLList(OrderType),
-      resolve(parentValue, args) {
+      resolve() {
         const query = 'SELECT * FROM orders';
 
         return db
