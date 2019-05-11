@@ -14,7 +14,7 @@ const RootQuery = new GraphQLObjectType({
       args: { 
         id: { type: GraphQLID } 
       },
-      resolve(args) {
+      resolve(parentValue, args) {
         const query = `SELECT * FROM orders WHERE id=$1`;
         const values = [args.id];
         return db
