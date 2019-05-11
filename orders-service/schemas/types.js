@@ -3,13 +3,13 @@ const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLString, GraphQLID } = graphql;
 
 const OrderType = new GraphQLObjectType({
-  name: 'Order',
+  name: 'orders',
   type: 'Query',
   fields: {
     id: { type: GraphQLID },
-    userId: { type: GraphQLID },
-    productId: { type: GraphQLID },
-    issueDate: { type: GraphQLString },
+    userid: { type: GraphQLString },
+    productid: { type: GraphQLString },
+    issuedate: { type: GraphQLString },
   },
 });
 

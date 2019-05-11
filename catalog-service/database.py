@@ -1,7 +1,7 @@
 
 from mongoengine import connect
 
-from models import Product
+from models.product import Product
 
 CONECTION_STRING = 'mongodb://root:compratec@mongodb-primary:27017/admin'
 

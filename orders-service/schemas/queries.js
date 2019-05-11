@@ -11,11 +11,12 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     order: {
       type: OrderType,
-      args: { id: { type: GraphQLID } },
+      args: { 
+        id: { type: GraphQLID } 
+      },
       resolve(args) {
-        const query = 'SELECT * FROM orders WHERE id=$1';
+        const query = `SELECT * FROM orders WHERE id=$1`;
         const values = [args.id];
-
         return db
           .one(query, values)
           .then(res => res)
