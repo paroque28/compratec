@@ -15,7 +15,7 @@ const config = {
 
 const db = pgp(config);
 
-
+/*
 db.none(QueryFile('./DbScripts/createTables.sql', { minify: true }))
   .then(data => {
     console.log('successfully created');
@@ -37,7 +37,7 @@ db.none(QueryFile('./DbScripts/createTables.sql', { minify: true }))
       console.log(error);
     });
   }
-  
+  */
 
 
 exports.db = db;

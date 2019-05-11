@@ -1,17 +1,14 @@
 
 schema {
   query: Query
-  mutation: Users
+  mutation: Mutation
 }
 
-type Users {
-  id: String
-  username: String
+type Mutation{
   createUser(username: String, password: String): String
   createToken(username: String, password: String): String
 }
 
 type Query {
-  getId(token: String): String
   getUsername(token: String): String
 }

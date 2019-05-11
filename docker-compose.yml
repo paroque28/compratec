@@ -79,14 +79,14 @@ services:
     #     - MONGODB_PRIMARY_ROOT_PASSWORD=compratec
     #     - MONGODB_REPLICA_SET_KEY=replicasetkey123
     
-        mongo:
-            image: mongo
-            restart: always
-            environment:
+    mongo:
+        image: mongo
+        restart: always
+        environment:
             MONGO_INITDB_ROOT_USERNAME: compratec
             MONGO_INITDB_ROOT_PASSWORD: compratec
-            ports:
-            - "27017:27017"
+        ports:
+        - "27017:27017"
   
 volumes:
     db-data:

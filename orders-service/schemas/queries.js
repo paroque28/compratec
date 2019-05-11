@@ -6,35 +6,11 @@ const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   type: "Query",
   fields: {
-    customer: {
-      type: CustomerType,
-      args: { id: { type: GraphQLID } },
-      resolve(parentValue, args) {
-        const query = `SELECT * FROM Customers WHERE id=$1`;
-        const values = [args.id];
-
-        return db
-          .one(query, values)
-          .then(res => res)
-          .catch(err => err);
-      }
-    },
-    allCustomers: {
-      type: new GraphQLList(CustomerType) ,
-      resolve(parentValue) {
-        const query = `SELECT * FROM Customers`;
-
-        return db
-          .many(query)
-          .then(res => res)
-          .catch(err => err);
-      }
-    },
     order: {
       type: OrderType,
       args: { id: { type: GraphQLID } },
       resolve(parentValue, args) {
-        const query = `SELECT * FROM Orders WHERE id=$1`;
+        const query = `SELECT * FROM orders WHERE id=$1`;
         const values = [args.id];
 
         return db
@@ -43,45 +19,18 @@ const RootQuery = new GraphQLObjectType({
           .catch(err => err);
       }
     },
-    product: {
-      type: ProductType,
-      args: { id: { type: GraphQLID } },
+    allOrders: {
+      type: OrderType,
       resolve(parentValue, args) {
-        const query = `SELECT * FROM Products WHERE id=$1`;
-        const values = [args.id];
+        const query = `SELECT * FROM orders`;
 
         return db
-          .one(query, values)
+          .one(query)
           .then(res => res)
           .catch(err => err);
       }
-    },
-    orderProduct: {
-      type: OrderProductType,
-      args: { id: { type: GraphQLID } },
-      resolve(parentValue, args) {
-        const query = `SELECT * FROM OrderProducts WHERE id=$1`;
-        const values = [args.id];
+    }
 
-        return db
-          .one(query, values)
-          .then(res => res)
-          .catch(err => err);
-      }
-    },
-    customerOrder: {
-      type: CustomerOrderType,
-      args: { id: { type: GraphQLID } },
-      resolve(parentValue, args) {
-        const query = `SELECT * FROM CustomerOrders WHERE id=$1`;
-        const values = [args.id];
-
-        return db
-          .one(query, values)
-          .then(res => res)
-          .catch(err => err);
-      }
-    },
   }
 });
 
