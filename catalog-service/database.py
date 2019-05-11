@@ -3,8 +3,10 @@ from mongoengine import connect
 
 from models import Product
 
+CONECTION_STRING = 'mongodb://root:compratec@mongodb-primary:27017/admin'
+
 # You can connect to a real mongo server instance by your own.
-connect('graphene-mongo-example', host='mongodb://compratec:compratec@mongo:27017/admin', alias='default')
+connect('graphene-mongo-example', host=CONECTION_STRING, alias='default')
 
 
 def init_db():
