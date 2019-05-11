@@ -1,8 +1,8 @@
-# flask_graphene_mongo/app.py
-from database import init_db
+
+from db.database import init_db
 from flask import Flask
 from flask_graphql import GraphQLView
-from schema import schema
+from schemas.schema import schema
 
 app = Flask(__name__)
 

@@ -1,4 +1,4 @@
-# flask_graphene_mongo/database.py
+
 from mongoengine import connect
 
 from models import Product

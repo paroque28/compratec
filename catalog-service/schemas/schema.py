@@ -1,7 +1,7 @@
-# flask_graphene_mongo/schema.py
+
 import graphene
 from graphene_mongo import MongoengineObjectType
-from models import Product as ProductModel
+from models.product import Product as ProductModel
 
 
 class Product(MongoengineObjectType):
