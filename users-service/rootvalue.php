@@ -113,7 +113,7 @@ EOL;
                 $tokenId    = base64_encode(openssl_random_pseudo_bytes(32));
                 $issuedAt   = time();
                 $notBefore  = $issuedAt + 5;  //Adding 5 seconds
-                $expire     = $notBefore + 60; // Adding n seconds
+                $expire     = $notBefore + 240; // Adding n seconds
                 $serverName = $config->get('serverName');
                 
                 /*

@@ -20,12 +20,12 @@ const RootQuery = new GraphQLObjectType({
       }
     },
     allOrders: {
-      type: OrderType,
+      type: GraphQLList(OrderType),
       resolve(parentValue, args) {
         const query = `SELECT * FROM orders`;
 
         return db
-          .one(query)
+          .any(query)
           .then(res => res)
           .catch(err => err);
       }

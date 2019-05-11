@@ -4,6 +4,8 @@ const { GraphQLObjectType, GraphQLString } = graphql;
 const { OrderType} = require("./types");
 const jwt   = require('jsonwebtoken');
 
+const KEY="compratec"
+
 const RootMutation = new GraphQLObjectType({
   name: "RootMutationType",
   type: "Mutation",
@@ -15,17 +17,20 @@ const RootMutation = new GraphQLObjectType({
         productId: { type: GraphQLString }
       },
       resolve(parentValue, args) {
-        var legit = jwt.verify(token, publicKEY, verifyOptions);
-        console.log("\nJWT verification result: " + JSON.stringify(legit));
-        var decoded =  jwt.decode(token, {complete: true});
-        console.log("\nDecoded jwt: "+ JSON.stringify(decoded));
-        let userFromToken = decoded.data.userName;
+        // var legit = jwt.verify(args.token, KEY);
+        // console.log("\nJWT verification result: " + JSON.stringify(legit));
+        // var decoded =  jwt.decode(args.token, {complete: true});
+        // console.log("\nDecoded jwt: "+ JSON.stringify(decoded));
+        // let userFromToken = decoded.payload.data.userId;
 
-        const query = `INSERT INTO orders( user_id, product_id ) VALUES ($1,$2) RETURNING order_id, user_id, product_id, issueDate`;
+        
+        const query = `INSERT INTO orders( userId, productId ) VALUES ($1,$2) RETURNING id, userId, productId, issueDate`;
         const values = [
-          userFromToken,
+          // userFromToken,
+          args.token,
           args.productId
         ];
+        
         return db
           .one(query, values)
           .then(res => res)
