@@ -2,6 +2,7 @@
 use GraphQL\Error\ClientAware;
 use Zend\Config\Factory;
 use Firebase\JWT\JWT;
+
 class UserException extends \Exception implements ClientAware
 {
     public function isClientSafe()
@@ -26,17 +27,18 @@ class DBException extends \Exception implements ClientAware
         return 'DBError';
     }
 }
-interface Resolver {
+interface Resolver
+{
     public function resolve($root, $args, $context);
 }
 class CreateUser implements Resolver
 {
     public function resolve($root, $args, $context)
-    {   
-        if (!array_key_exists('username', $args)){
+    {
+        if (!array_key_exists('username', $args)) {
             throw new UserException('Field username is empty!');
         }
-        if (!array_key_exists('password', $args)){
+        if (!array_key_exists('password', $args)) {
             throw new UserException('Field password is empty!');
         }
         $username = $args['username'];
@@ -59,30 +61,27 @@ class CreateUser implements Resolver
         }
         
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        try{
+        try {
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
             $stmt = $db->prepare($sql);
             $stmt->execute([$username, $password_hash]);
             return "New record created successfully";
-        } catch(PDOException $e){
-            throw new DBException( "Error: " . $sql . $e->getMessage());
+        } catch (PDOException $e) {
+            throw new DBException("Error: " . $sql . $e->getMessage());
         }
         
         $db->close();
-    
-
     }
-    
 }
 class CreateToken implements Resolver
 {
     public function resolve($root, $args, $context)
-    {   
-        if (!array_key_exists('username', $args)){
+    {
+        if (!array_key_exists('username', $args)) {
             throw new UserException('Field username is empty!');
         }
-        if (!array_key_exists('password', $args)){
+        if (!array_key_exists('password', $args)) {
             throw new UserException('Field password is empty!');
         }
         $username = $args['username'];
@@ -109,7 +108,6 @@ EOL;
         
         if ($rs) {
             if (password_verify($password, $rs['password'])) {
-                
                 $tokenId    = base64_encode(openssl_random_pseudo_bytes(32));
                 $issuedAt   = time();
                 $notBefore  = $issuedAt + 5;  //Adding 5 seconds
@@ -141,7 +139,7 @@ EOL;
                 /*
                     * Encode the array to a JWT string.
                     * Second parameter is the key to encode the token.
-                    * 
+                    *
                     * The output string can be validated at http://jwt.io/
                     */
                     
@@ -152,31 +150,26 @@ EOL;
                     );
                     
                 return $jwt;
-            } else{
+            } else {
                 throw new UserException('Password doesn\'t match');
             }
         } else {
             throw new UserException('User doesn\'t exist');
         }
-
     }
-    
 }
 function decodeJWT($jwt)
 {
     $config = Factory::fromFile('config/config.php', true);
     $secretKey = base64_decode($config->get('jwt')->get('key'));
     $algorithm = $config->get('jwt')->get('algorithm');
-    try{
-        $decoded = JWT::decode($jwt, $secretKey,array($algorithm));
-    }
-    catch (Firebase\JWT\ExpiredException $e){
+    try {
+        $decoded = JWT::decode($jwt, $secretKey, array($algorithm));
+    } catch (Firebase\JWT\ExpiredException $e) {
         throw new UserException("Token Expired");
-    }
-    catch(Firebase\JWT\SignatureInvalidException $e){
+    } catch (Firebase\JWT\SignatureInvalidException $e) {
         throw new UserException("Signature Invalid");
-    }
-    catch(Firebase\JWT\BeforeValidException $e){
+    } catch (Firebase\JWT\BeforeValidException $e) {
         throw new UserException("Before Valid");
     }
     return $decoded;
@@ -185,8 +178,8 @@ function decodeJWT($jwt)
 class GetUsername implements Resolver
 {
     public function resolve($root, $args, $context)
-    {   
-        if (!array_key_exists('token', $args)){
+    {
+        if (!array_key_exists('token', $args)) {
             throw new UserException('Field token is empty!');
         }
         $jwt = (array) decodeJWT($args['token']);
@@ -202,22 +195,21 @@ class GetUsername implements Resolver
         $rs = $stmt->fetch();
         if ($rs) {
             return $rs['username'];
-        }else {
+        } else {
             throw new UserException("Unknown User Id");
         }
     }
-    
 }
 return [
-    'createUser' => function($root, $args, $context) {
+    'createUser' => function ($root, $args, $context) {
         $obj = new CreateUser();
         return $obj->resolve($root, $args, $context);
     },
-    'createToken' => function($root, $args, $context) {
+    'createToken' => function ($root, $args, $context) {
         $obj = new CreateToken();
         return $obj->resolve($root, $args, $context);
     },
-    'getUsername' => function($root, $args, $context) {
+    'getUsername' => function ($root, $args, $context) {
         $obj = new GetUsername();
         return $obj->resolve($root, $args, $context);
     },

@@ -12,13 +12,28 @@ connect('graphene-mongo-example', host=CONECTION_STRING, alias='default')
 def init_db():
     # Create the fixtures
     try:
-        polo = Product(code = 'c001', name='Polo', color='blue', price=20, quantity = 100)
+        polo = Product(
+            code='c001',
+            name='Polo',
+            color='blue',
+            price=20,
+            quantity=100)
         polo.save()
 
-        jersey = Product(code = 'c002', name='Jersey', color='black', price=30, quantity = 80)
+        jersey = Product(
+            code='c002',
+            name='Jersey',
+            color='black',
+            price=30,
+            quantity=80)
         jersey.save()
 
-        dressShirt = Product(code = 'c003', name='Dress Shirt', color='white', price=25, quantity = 80)
+        dressShirt = Product(
+            code='c003',
+            name='Dress Shirt',
+            color='white',
+            price=25,
+            quantity=80)
         dressShirt.save()
-    except:
+    except BaseException:
         print("DB already initialized")
