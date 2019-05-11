@@ -8,7 +8,7 @@ const OrderType = new GraphQLObjectType({
     id: { type: GraphQLID },
     userId: { type: GraphQLID },
     productId: { type: GraphQLID },
-    postDate: { type: GraphQLString }
+    issueDate: { type: GraphQLString }
   }
 });
 
