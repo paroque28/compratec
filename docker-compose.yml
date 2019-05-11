@@ -17,6 +17,9 @@ services:
     users-service:
         build: ./users-service
         image: paroque28/compratec:users-service
+        deploy:
+            mode: replicated
+            replicas: 2
     catalog-service:
         build: ./catalog-service
         volumes:
