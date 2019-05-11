@@ -13,5 +13,3 @@ class Product(Document):
     color = StringField()
     price = IntField()
     quantity = IntField()
-    
-
