@@ -10,7 +10,7 @@ services:
             - users-service
             - catalog-service
             - orders-service
-         deploy:
+        deploy:
             placement:
                 constraints:
                 - node.role == manager
@@ -28,6 +28,8 @@ services:
             - 8002:80
     orders-service:
         build: ./orders-service
+        volumes:
+                - ./orders-service:/home/node/app
         image: paroque28/compratec:orders-service
         ports:
             - 8003:80        
@@ -35,7 +37,7 @@ services:
         image: postgres
         volumes:
             - ./sql:/docker-entrypoint-initdb.d
-            -sql-data:/var/lib/postgresql/data
+            - sql-data:/var/lib/postgresql/data
         ports:
             - 5432:5432
         environment:

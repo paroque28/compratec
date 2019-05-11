@@ -15,11 +15,10 @@ var app = express();
 app.use(
   '/',
   expressGraphQl({
-    schema: schema,
-    graphiql: true
+    schema: schema
   })
 );
 
-app.listen(3000, () =>
-  console.log('GraphQL server running on localhost:3000')
+app.listen(80, () =>
+  console.log('GraphQL server running on 0.0.0.0:80')
 );
