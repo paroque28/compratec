@@ -1,23 +1,32 @@
 version: "3.3"
 services:
     reverseproxy:
-        build: ./nginx
+        image: nginx
         ports:
             - 80:80
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
         depends_on:
             - users-service
             - catalog-service
             - orders-service
+         deploy:
+            placement:
+                constraints:
+                - node.role == manager
     users-service:
         build: ./users-service
+        image: paroque28/compratec:users-service
         ports:
             - 8001:8080
     catalog-service:
         build: ./catalog-service
+        image: paroque28/compratec:catalog-service
         ports:
             - 8002:80
     orders-service:
         build: ./orders-service
+        image: paroque28/compratec:orders-service
         ports:
             - 8003:80        
     sql:
