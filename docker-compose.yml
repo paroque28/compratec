@@ -17,22 +17,19 @@ services:
     users-service:
         build: ./users-service
         image: paroque28/compratec:users-service
-        ports:
-            - 8001:8080
+        deploy:
+            mode: replicated
+            replicas: 2
     catalog-service:
         build: ./catalog-service
         volumes:
             - ./catalog-service:/usr/src/app
         image: paroque28/compratec:catalog-service
-        ports:
-            - 8002:80
     orders-service:
         build: ./orders-service
         volumes:
                 - ./orders-service:/home/node/app
-        image: paroque28/compratec:orders-service
-        ports:
-            - 8003:80        
+        image: paroque28/compratec:orders-service 
     sql:
         image: postgres
         volumes:
@@ -50,7 +47,7 @@ services:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: compratec
         ports:
-            - "27017:27017"
+            - 27017:27017
         volumes:
             - 'mongodb_master_data:/data/db'
   
